@@ -5,7 +5,7 @@ export async function POST(request: NextRequest){
     const { searchParams } = new URL(request.url);
 
   // Extract specific query parameters
-  const entity = searchParams.get('entity');
+  const name = searchParams.get('name');
   const category = searchParams.get('category');
   const url = searchParams.get('url');
   const description = searchParams.get('description');
@@ -17,8 +17,8 @@ export async function POST(request: NextRequest){
         }
     
         const [result]: any = await connection.execute(
-        'INSERT INTO supported_charities (entity, url, category, description) VALUES (?, ?, ?, ?)',
-        [entity, url, category,description]
+        'INSERT INTO supported_charities (charity_name, url, category, description) VALUES (?, ?, ?, ?)',
+        [name, url, category,description]
       )
       return NextResponse.json({ message: 'charity entity added successfully' }, { status: 201 })
     }
@@ -30,8 +30,8 @@ export async function POST(request: NextRequest){
         }
     
         const [result]: any = await connection.execute(
-        'INSERT INTO supported_crypto (entity, url, category, description) VALUES (?, ?, ?, ?)',
-        [entity, url, category,description]
+        'INSERT INTO supported_crypto (crypto_name, url, category, description) VALUES (?, ?, ?, ?)',
+        [name, url, category,description]
       )
       return NextResponse.json({ message: 'crypto entity added successfully' }, { status: 201 })
     }

@@ -37,7 +37,7 @@ export async function GET(req: Request) {
 
                         for(let d=0;d<usersCharityNameRows;d++){
                             const [result]: any = await connection.execute(
-                                'INSERT INTO user_investments (user_id, timestamp, source, amount) VALUES (?, ?, ?, ?)',
+                                'INSERT INTO user_investments (user_id, timestamp, category, amount) VALUES (?, ?, ?, ?)',
                                 [rows[i].user_id, new Date(), usersCharityNameRows[d],numofFChar]
                               )
                         }
@@ -59,7 +59,7 @@ export async function GET(req: Request) {
 
                         for(let d=0;d<usersCryptoNameRows;d++){
                             const [result]: any = await connection.execute(
-                                'INSERT INTO user_investments (user_id, timestamp, source, amount) VALUES (?, ?, ?, ?)',
+                                'INSERT INTO user_investments (user_id, timestamp, category, amount) VALUES (?, ?, ?, ?)',
                                 [rows[i].user_id, new Date(), usersCryptoNameRows[d],numOfCrypto]
                               )
                         }
