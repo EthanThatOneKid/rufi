@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   ArrowUpDown,
   Bitcoin,
@@ -27,8 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Investment } from "@/lib/types";
-import { InvestmentInput } from "./investment-input";
-import Link from "next/link";
+import InvestmentInput from "./investment-input";
 
 interface AdjustedInvestment extends Investment {
   isLocked: boolean;
@@ -165,6 +165,8 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
     AdjustedInvestment[] | null
   >(null);
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   function sortInvestments(sortBy: "title" | "percentage") {
     setInvestments((prevInvestments) => {
       return prevInvestments.toSorted((a, b) => {
@@ -245,16 +247,35 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
             <Button variant="outline">View statements</Button>
           </Link>
 
-          <Dialog>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline">Add investment</Button>
+              <Button variant="outline" disabled={adjustedInvestments !== null}>
+                Add investment
+              </Button>
             </DialogTrigger>
             <DialogContent className="max-w-5xl max-h-[80vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Add investment</DialogTitle>
               </DialogHeader>
               <div className="grid gap-4">
-                <InvestmentInput />
+                <InvestmentInput
+                  onChange={(investment) => {
+                    if (
+                      adjustedInvestments?.some((i) => i.id === investment.id)
+                    ) {
+                      alert("You already invest in this!");
+                      return;
+                    }
+
+                    setInvestments((prevInvestments) => [
+                      ...prevInvestments,
+                      investment,
+                    ]);
+
+                    // Close the dialog.
+                    setDialogOpen(false);
+                  }}
+                />
               </div>
             </DialogContent>
           </Dialog>
