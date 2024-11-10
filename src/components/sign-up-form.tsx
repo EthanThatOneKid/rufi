@@ -7,6 +7,8 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
+
+import axios from 'axios';
 import {
   Card,
   CardContent,
@@ -25,18 +27,68 @@ import {
 } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
 
+// const signUpSchema = z
+//   .object({
+//     username: z.string().min(3, 'Username must be at least 3 characters'),
+//     password: z.string().min(8, 'Password must be at least 8 characters'),
+//     confirmPassword: z.string(),
+//     bank: z
+//       .array(z.enum(['chase', 'wellsfargo', 'bankofamerica']))
+//       .nonempty('Please select at least one bank'),
+//     addCreditCard: z.boolean().default(false),
+//     creditCardNumber: z.string().optional(),
+//     creditCardExpiry: z.string().optional(),
+//     creditCardCVC: z.string().optional(),
+//   })
+//   .refine((data) => data.password === data.confirmPassword, {
+//     message: "Passwords don't match",
+//     path: ['confirmPassword'],
+//   })
+//   .refine(
+//     (data) => {
+//       if (data.addCreditCard) {
+//         return (
+//           data.creditCardNumber && data.creditCardExpiry && data.creditCardCVC
+//         );
+//       }
+//       return true;
+//     },
+//     {
+//       message:
+//         "Credit card information is required if 'Add credit card now' is checked",
+//       path: ['creditCardNumber'],
+//     }
+//   );
+
 const signUpSchema = z
   .object({
-    username: z.string().min(3, 'Username must be at least 3 characters'),
+    username: z
+      .string()
+      .min(3, 'Username must be at least 3 characters')
+      .max(20, 'Username cannot exceed 20 characters'),
+    email: z.string().email('Please enter a valid email address'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string(),
     bank: z
       .array(z.enum(['chase', 'wellsfargo', 'bankofamerica']))
       .nonempty('Please select at least one bank'),
+    bank_account_no: z.string().nonempty('Bank account number is required'),
+    crypto_percentage: z
+      .number()
+      .min(0, 'Must be at least 0')
+      .max(100, 'Cannot exceed 100'),
+    charity_percentage: z
+      .number()
+      .min(0, 'Must be at least 0')
+      .max(100, 'Cannot exceed 100'),
     addCreditCard: z.boolean().default(false),
-    creditCardNumber: z.string().optional(),
-    creditCardExpiry: z.string().optional(),
-    creditCardCVC: z.string().optional(),
+    card_number: z
+      .string()
+      .min(16, 'Card number must be 16 digits')
+      .max(16, 'Card number must be 16 digits')
+      .optional(),
+    card_expiry: z.string().optional(),
+    cvv: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -45,16 +97,14 @@ const signUpSchema = z
   .refine(
     (data) => {
       if (data.addCreditCard) {
-        return (
-          data.creditCardNumber && data.creditCardExpiry && data.creditCardCVC
-        );
+        return data.card_number && data.card_expiry && data.cvv;
       }
       return true;
     },
     {
       message:
         "Credit card information is required if 'Add credit card now' is checked",
-      path: ['creditCardNumber'],
+      path: ['card_number'],
     }
   );
 
@@ -67,19 +117,40 @@ export function SignUpForm() {
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       username: '',
+      email: '',
       password: '',
       confirmPassword: '',
+      bank_account_no: '',
       bank: [],
+      crypto_percentage: 50, // default to 50%
+      charity_percentage: 50, // default to 50%
       addCreditCard: false,
-      creditCardNumber: '',
-      creditCardExpiry: '',
-      creditCardCVC: '',
+      card_number: '',
+      card_expiry: '',
+      cvv: '',
     },
   });
 
+  // SignUp function using Axios
+  async function signUp(data: SignUpForm) {
+    console.log(data);
+    try {
+      const response = await axios.post('/api/register', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Signup successful:', response.data);
+      window.location.href = '/login';
+      // Handle success (e.g., redirect or show a success message)
+    } catch (error) {
+      console.error('Signup failed:', error);
+      // Handle error (e.g., show error message to the user)
+    }
+  }
   const onSubmit = (data: SignUpForm) => {
     console.log(data);
-    alert('Form submitted successfully!');
+    signUp(data);
   };
 
   return (
@@ -98,6 +169,19 @@ export function SignUpForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input {...field} className='w-full' />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='email'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input {...field} className='w-full' />
                     </FormControl>
@@ -134,6 +218,19 @@ export function SignUpForm() {
               <Separator className='my-4' />
               <FormField
                 control={form.control}
+                name='bank_account_no'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bank Account Number</FormLabel>
+                    <FormControl>
+                      <Input {...field} className='w-full' />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name='bank'
                 render={({ field }) => (
                   <FormItem>
@@ -142,7 +239,7 @@ export function SignUpForm() {
                       {['chase', 'wellsfargo', 'bankofamerica'].map((bank) => (
                         <div key={bank} className='flex items-center space-x-3'>
                           <Checkbox
-                            checked={field.value.includes(bank)}
+                            checked={(field.value as string[]).includes(bank)}
                             onCheckedChange={(checked) => {
                               const newValue = checked
                                 ? [...field.value, bank]
@@ -189,7 +286,7 @@ export function SignUpForm() {
                 <div className='space-y-4'>
                   <FormField
                     control={form.control}
-                    name='creditCardNumber'
+                    name='card_number'
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Credit Card Number</FormLabel>
@@ -203,7 +300,7 @@ export function SignUpForm() {
                   <div className='flex space-x-4'>
                     <FormField
                       control={form.control}
-                      name='creditCardExpiry'
+                      name='card_expiry'
                       render={({ field }) => (
                         <FormItem className='flex-1'>
                           <FormLabel>Expiry Date</FormLabel>
@@ -220,7 +317,7 @@ export function SignUpForm() {
                     />
                     <FormField
                       control={form.control}
-                      name='creditCardCVC'
+                      name='cvv'
                       render={({ field }) => (
                         <FormItem className='flex-1'>
                           <FormLabel>CVC</FormLabel>
