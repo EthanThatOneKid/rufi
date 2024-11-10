@@ -76,16 +76,15 @@ function adjustInvestments(
     const isLocked = ("isLocked" in investment && investment.isLocked) ?? false;
     return {
       ...investment,
-      adjustedPercentage:
-        investment.id === id
-          ? value
-          : isLocked
-          ? getCurrentPercentage(investment)
-          : adjustInvestment(
-              investment.percentage,
-              difference,
-              Math.max(unlockedInvestmentsLength, 1)
-            ),
+      adjustedPercentage: isLocked
+        ? getCurrentPercentage(investment)
+        : investment.id === id
+        ? value
+        : adjustInvestment(
+            investment.percentage,
+            difference,
+            Math.max(unlockedInvestmentsLength, 1)
+          ),
       isLocked,
     };
   });
