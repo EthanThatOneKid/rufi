@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { Investment } from "@/lib/types";
 import { InvestmentInput } from "./investment-input";
+import Link from "next/link";
 
 interface AdjustedInvestment extends Investment {
   isLocked: boolean;
@@ -240,6 +241,10 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
         </p>
 
         <div>
+          <Link href="/statements">
+            <Button variant="outline">View statements</Button>
+          </Link>
+
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline">Add investment</Button>

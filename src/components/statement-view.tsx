@@ -22,7 +22,7 @@ export default function StatementView(props: StatementViewProps) {
             <tr key={investment.id}>
               <td className="py-2 px-4 border-b">{investment.icon}</td>
               <td className="py-2 px-4 border-b">{investment.title}</td>
-              <td className="py-2 px-4 border-b">{investment.percentage}</td>
+              <td className="py-2 px-4 border-b">{investment.percentage}%</td>
             </tr>
           ))}
         </tbody>

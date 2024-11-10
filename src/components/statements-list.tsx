@@ -13,7 +13,10 @@ export default function StatementsList(props: StatementsListProps) {
       <ul>
         {props.statements.map((statement) => (
           <li key={statement.id} className="space-y-4">
-            <Link href={`/statements/${statement.id}`}>
+            <Link
+              href={`/statements/${statement.id}`}
+              className="text-blue-500 hover:underline"
+            >
               <h2 className="text-xl font-bold">{statement.title}</h2>
             </Link>
           </li>
