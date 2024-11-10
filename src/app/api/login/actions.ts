@@ -1,22 +1,32 @@
 'use server'
 
 import { z } from 'zod'
+import { getSingleStoreConnection } from '../../lib/db';
+import bcrypt from 'bcryptjs'
+
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  username: z.string().email(),
   password: z.string().min(8),
 })
 
 export async function loginUser(userData: unknown) {
   try {
     // Validate input
-    const { email, password } = loginSchema.parse(userData)
-
-    // Simulate database lookup and password verification
-    // In a real application, you would query your database and use a secure password comparison
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulating network delay
+    const { username, password } = loginSchema.parse(userData)
+    const connection = await getSingleStoreConnection();
+    if (!connection) {
+        throw new Error('Failed to establish database connection');
+    }
     
-    if (email === 'user@example.com' && password === 'password123') {
+    // Simulate database lookup and password verification
+    const [rows]: any = await connection.execute(
+        'SELECT COUNT(*) as count FROM users WHERE username = ? and password = ?',
+        [username,password]
+      );
+  
+     
+    if (username === 'user@example.com' && password === 'password123') {
       // Generate a session token (in a real app, use a secure method to generate tokens)
       const sessionToken = Math.random().toString(36).substring(2, 15)
 
@@ -24,7 +34,7 @@ export async function loginUser(userData: unknown) {
         success: true, 
         user: { 
           id: '1', 
-          email, 
+          email:'user@example.com', 
           name: 'John Doe' 
         },
         sessionToken // Return the session token to be set in the cookie

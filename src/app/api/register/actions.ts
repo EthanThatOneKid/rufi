@@ -1,13 +1,19 @@
 'use server'
 
 import { z } from 'zod'
+import bcrypt from 'bcryptjs'
+import { getSingleStoreConnection } from '../../lib/db';
 
 const userSchema = z.object({
   username: z.string().min(3).max(20),
   email: z.string().email(),
   password: z.string().min(8),
   card_number: z.string().min(16).max(16),
-  bank_account_no: z.string()
+  cvv: z.string(),
+  card_expiry: z.string(),
+  bank_account_no: z.string(),
+  crypto_percentage: z.number(),
+  charity_percentage: z.number()
 })
 
 export async function registerUser(userData: unknown) {
@@ -16,11 +22,24 @@ export async function registerUser(userData: unknown) {
     const validatedData = userSchema.parse(userData)
 
     // Simulate database operation
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const connection = await getSingleStoreConnection();
+    if (!connection) {
+        throw new Error('Failed to establish database connection');
+    }
 
     // Here you would typically:
     // 1. Check if the user already exists
     // 2. Hash the password
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(validatedData.password, salt)
+    const exampleDate = new Date()
+   
+    const [result]: any = await connection.execute(
+      'INSERT INTO user_table (username, email, password, card_number, CVV, card_expiry, bank_account_no, crypto_percentage, charity_percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [validatedData.username, validatedData.email, hashedPassword,validatedData.card_number,validatedData.cvv,validatedData.card_expiry,validatedData.bank_account_no,validatedData.crypto_percentage,validatedData.charity_percentage]
+    )
+
+    return { success: true, userId: result.insertId }
     // 3. Store the user in the database
     // 4. Create a session or token
 
