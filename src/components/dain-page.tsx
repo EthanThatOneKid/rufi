@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowUpIcon, ArrowDownIcon, MinusIcon } from 'lucide-react';
 
 function SignalIcon({ signal }: { signal: SignalType }) {
-  switch (signal) {
+  switch (signal.toUpperCase()) {
     case 'BUY':
       return <ArrowUpIcon className='w-5 h-5 text-green-500' />;
     case 'SELL':
@@ -21,9 +21,9 @@ function SignalIcon({ signal }: { signal: SignalType }) {
 
 function SignalBadge({ signal }: { signal: SignalType }) {
   const colorClass =
-    signal === 'BUY'
+    signal.toUpperCase() === 'BUY'
       ? 'bg-green-100 text-green-800'
-      : signal === 'SELL'
+      : signal.toUpperCase() === 'SELL'
       ? 'bg-red-100 text-red-800'
       : 'bg-gray-100 text-gray-800';
   return (
