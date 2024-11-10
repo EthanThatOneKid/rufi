@@ -141,7 +141,7 @@ export function SignUpForm() {
         },
       });
       console.log('Signup successful:', response.data);
-      window.location.href = '/';
+      window.location.href = '/login';
       // Handle success (e.g., redirect or show a success message)
     } catch (error) {
       console.error('Signup failed:', error);
