@@ -9,6 +9,7 @@ import {
   Trash,
   Lock,
   LockOpen,
+  SparklesIcon,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -130,7 +131,7 @@ export interface InvestmentsManagerProps {
 
 export function InvestmentsManager(props: InvestmentsManagerProps) {
   const [investments, setInvestments] = useState<Investment[]>([
-    ...(props.investments ?? exampleInvestments),
+    ...(props.investments ?? []),
   ]);
 
   /**
@@ -142,7 +143,8 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
     AdjustedInvestment[] | null
   >(null);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isAddInvestmentDialogOpen, setIsAddInvestmentDialogOpen] =
+    useState(false);
 
   function sortInvestments(sortBy: "title" | "percentage") {
     setInvestments((prevInvestments) => {
@@ -212,19 +214,17 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
 
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
-      <h1 className="text-2xl font-bold mb-4">Round-Up for Impact</h1>
-
       <div className="flex justify-between items-center mb-4">
-        <p className="text-sm text-muted-foreground">
-          Adjust the sliders to change investment percentages.
-        </p>
+        <h1 className="text-2xl font-bold mb-4">Round-Up for Impact</h1>
 
-        <div>
+        <div className="flex space-x-2">
           <Link href="/statements">
             <Button variant="outline">View statements</Button>
-          </Link>
-
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          </Link>{" "}
+          <Dialog
+            open={isAddInvestmentDialogOpen}
+            onOpenChange={setIsAddInvestmentDialogOpen}
+          >
             <DialogTrigger asChild>
               <Button variant="outline" disabled={adjustedInvestments !== null}>
                 Add investment
@@ -250,13 +250,12 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
                     ]);
 
                     // Close the dialog.
-                    setDialogOpen(false);
+                    setIsAddInvestmentDialogOpen(false);
                   }}
                 />
               </div>
             </DialogContent>
-          </Dialog>
-
+          </Dialog>{" "}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" disabled={adjustedInvestments !== null}>
@@ -276,82 +275,94 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
         </div>
       </div>
 
+      <p className="text-sm text-muted-foreground">
+        Adjust the sliders to change investment percentages.
+      </p>
+
       {adjustedInvestments !== null && <SaveOrCancelChanges />}
 
-      <ul className="space-y-6">
-        {investments.map((investment, i) => (
-          <li key={investment.id} className="bg-card rounded-lg p-4 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-2">
-                <div className={`p-2 rounded-full ${investment.color}`}>
-                  {investment.icon}
+      {investments.length === 0 ? (
+        <p className="text-muted-foreground">
+          You have no investments. Add one to get started!
+        </p>
+      ) : (
+        <ul className="space-y-6">
+          {investments.map((investment, i) => (
+            <li
+              key={investment.id}
+              className="bg-card rounded-lg p-4 shadow-sm"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-2">
+                  <div className={`p-2 rounded-full ${investment.color}`}>
+                    {investment.icon}
+                  </div>
+                  <span className="font-medium">{investment.title}</span>
                 </div>
-                <span className="font-medium">{investment.title}</span>
-              </div>
-              <span className="font-bold text-lg">
-                {adjustedInvestments !== null ? (
-                  getDifference(adjustedInvestments[i]) === 0 ? (
-                    <em>Unchanged</em>
-                  ) : getDifference(adjustedInvestments[i]) > 0 ? (
-                    <span className="text-red-500">
-                      (-{getDifference(adjustedInvestments[i])}%)
-                    </span>
-                  ) : (
-                    <span className="text-green-500">
-                      (+{Math.abs(getDifference(adjustedInvestments[i]))}%)
-                    </span>
-                  )
-                ) : (
-                  ""
-                )}{" "}
-                {adjustedInvestments?.[i]?.adjustedPercentage ??
-                  investment.percentage}
-                %{" "}
-                {adjustedInvestments !== null && (
-                  <Button onClick={() => handleToggleLockAt(i)}>
-                    {adjustedInvestments?.[i]?.isLocked ? (
-                      <Lock className="h-6 w-6" />
+                <span className="font-bold text-lg">
+                  {adjustedInvestments !== null ? (
+                    getDifference(adjustedInvestments[i]) === 0 ? (
+                      <em>Unchanged</em>
+                    ) : getDifference(adjustedInvestments[i]) > 0 ? (
+                      <span className="text-red-500">
+                        (-{getDifference(adjustedInvestments[i])}%)
+                      </span>
                     ) : (
-                      <LockOpen className="h-6 w-6" />
-                    )}
-                  </Button>
-                )}
-                {adjustedInvestments === null && (
-                  <Button
-                    onClick={() => {
-                      if (!confirm("Are you sure you want to remove this?")) {
-                        return;
-                      }
+                      <span className="text-green-500">
+                        (+{Math.abs(getDifference(adjustedInvestments[i]))}%)
+                      </span>
+                    )
+                  ) : (
+                    ""
+                  )}{" "}
+                  {adjustedInvestments?.[i]?.adjustedPercentage ??
+                    investment.percentage}
+                  %{" "}
+                  {adjustedInvestments !== null && (
+                    <Button onClick={() => handleToggleLockAt(i)}>
+                      {adjustedInvestments?.[i]?.isLocked ? (
+                        <Lock className="h-6 w-6" />
+                      ) : (
+                        <LockOpen className="h-6 w-6" />
+                      )}
+                    </Button>
+                  )}
+                  {adjustedInvestments === null && (
+                    <Button
+                      onClick={() => {
+                        if (!confirm("Are you sure you want to remove this?")) {
+                          return;
+                        }
 
-                      setInvestments(
-                        investments.filter((_, index) => index !== i)
-                      );
-                    }}
-                  >
-                    <Trash className="h-6 w-6" />
-                  </Button>
-                )}
-              </span>
-            </div>
-            <Slider
-              disabled={adjustedInvestments?.[i]?.isLocked}
-              min={0}
-              max={100}
-              step={1}
-              value={[
-                adjustedInvestments?.[i]?.adjustedPercentage ??
-                  investment.percentage,
-              ]}
-              onValueChange={([value]) =>
-                handlePercentageChange(investment.id, value)
-              }
-              className="w-full"
-              aria-label={`Adjust percentage for ${investment.title}`}
-            />
-          </li>
-        ))}
-      </ul>
-
+                        setInvestments(
+                          investments.filter((_, index) => index !== i)
+                        );
+                      }}
+                    >
+                      <Trash className="h-6 w-6" />
+                    </Button>
+                  )}
+                </span>
+              </div>
+              <Slider
+                disabled={adjustedInvestments?.[i]?.isLocked}
+                min={0}
+                max={100}
+                step={1}
+                value={[
+                  adjustedInvestments?.[i]?.adjustedPercentage ??
+                    investment.percentage,
+                ]}
+                onValueChange={([value]) =>
+                  handlePercentageChange(investment.id, value)
+                }
+                className="w-full"
+                aria-label={`Adjust percentage for ${investment.title}`}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
       {adjustedInvestments !== null && <SaveOrCancelChanges />}
     </div>
   );
