@@ -1,26 +1,33 @@
 "use client";
 
-import { startAnyoneClient } from "@/lib/anon";
-import { useEffect, useState, Suspense, SetStateAction } from "react";
+import type { SignalData, SignalType } from "@/lib/stock-algorithm";
+import { mapStocksToSignals } from "@/lib/stock-algorithm";
+import { useEffect, useState, Suspense } from "react";
 
 export function SignalDataView() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<Map<string, SignalType> | null>(null);
   useEffect(() => {
-    startAnyoneClient().then(async (anon) => {
-      await anon
-        .request("/api/signals")
-        .then((data: SetStateAction<null>) => setData(data));
-    });
-  }, [startAnyoneClient]);
+    fetch("/api/signals")
+      .then((request) => request.json())
+      .then((signalsRequest: Array<SignalData>) => {
+        setData(mapStocksToSignals(signalsRequest));
+      });
+  }, [setData]);
 
   if (!data) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div>
-      <h2>Signal Data</h2>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+    <div className="p-4 bg-white shadow-md rounded-lg">
+      <h2 className="text-2xl font-bold mb-4">DAIN, AI stock signals</h2>
+      <ul className="list-disc pl-5">
+        {Array.from(data).map(([stock, signal]) => (
+          <li key={stock} className="mb-2">
+            <span className="font-semibold">{stock}:</span> {signal}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
