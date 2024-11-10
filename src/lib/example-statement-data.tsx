@@ -1,5 +1,14 @@
-import { ZapIcon } from "lucide-react";
+import { CircleDollarSignIcon } from "lucide-react";
 import type { Statement } from "@/lib/types";
+
+/**
+ * fetchExampleStatement fetches an example statement from the server.
+ */
+export async function fetchExampleStatement(): Promise<Statement> {
+  return await fetch("/api/getusertransaction?username=bob").then((response) =>
+    response.json()
+  );
+}
 
 export const exampleStatement: Statement = {
   id: "1",
@@ -10,14 +19,14 @@ export const exampleStatement: Statement = {
       title: "Stocks",
       percentage: 60,
       color: "blue",
-      icon: <ZapIcon />,
+      icon: <CircleDollarSignIcon />,
     },
     {
       id: "2",
       title: "Bonds",
       percentage: 40,
       color: "green",
-      icon: <ZapIcon />,
+      icon: <CircleDollarSignIcon />,
     },
   ],
   transactions: [

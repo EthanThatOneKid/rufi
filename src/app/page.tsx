@@ -10,6 +10,7 @@ export default function LandingPage() {
         style={{
           backgroundBlendMode: "soft-light",
           background: "url('/water.png') no-repeat, #FF514F",
+          backgroundSize: "cover",
         }}
       >
         <div
