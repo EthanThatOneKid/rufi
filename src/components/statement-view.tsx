@@ -14,6 +14,7 @@ export default function StatementView(props: StatementViewProps) {
           <tr>
             <th className="py-2 px-4 border-b">Investment Icon</th>
             <th className="py-2 px-4 border-b">Investment Title</th>
+            <th className="py-2 px-4 border-b">Investment Percentage</th>
           </tr>
         </thead>
         <tbody>
@@ -21,6 +22,7 @@ export default function StatementView(props: StatementViewProps) {
             <tr key={investment.id}>
               <td className="py-2 px-4 border-b">{investment.icon}</td>
               <td className="py-2 px-4 border-b">{investment.title}</td>
+              <td className="py-2 px-4 border-b">{investment.percentage}</td>
             </tr>
           ))}
         </tbody>
