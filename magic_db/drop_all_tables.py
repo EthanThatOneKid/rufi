@@ -23,7 +23,7 @@ def drop_all_tables():
     try:
         with connection.cursor() as cursor:
             # Drop each table if it exists
-            tables = ["transactions", "supported_charities", "supported_crypto", "user_pref_charity", "user_pref_crypto", "user_table", "signals"]
+            tables = ["transactions", "supported_charities", "supported_crypto", "user_pref_charity", "user_pref_crypto", "user_table", "signals", "user_investments"]
             for table in tables:
                 query = f"DROP TABLE IF EXISTS {table};"
                 cursor.execute(query)

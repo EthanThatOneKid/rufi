@@ -119,8 +119,7 @@ def create_additional_tables():
                 username VARCHAR(50),
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
                 category VARCHAR(50),
-                amount DECIMAL(10, 2),
-                PRIMARY KEY (username, timestamp)
+                amount DECIMAL(10, 2)
             );
             """
             cursor.execute(query_user_investments)
