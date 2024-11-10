@@ -1,12 +1,6 @@
+"use client";
+
 import { useState } from "react";
-import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   ArrowUpDown,
   Bitcoin,
@@ -17,6 +11,22 @@ import {
   Lock,
   LockOpen,
 } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { InvestmentInput } from "./investment-input";
 
 interface Investment {
   id: string;
@@ -235,26 +245,43 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
         <p className="text-sm text-muted-foreground">
           Adjust the sliders to change investment percentages.
         </p>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={adjustedInvestments !== null}
-            >
-              <ArrowUpDown className="mr-2 h-4 w-4" />
-              Sort by
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => sortInvestments("title")}>
-              Title
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => sortInvestments("percentage")}>
-              Percentage
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+        <div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Add investment</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>Add investment</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <InvestmentInput />
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={adjustedInvestments !== null}
+              >
+                <ArrowUpDown className="mr-2 h-4 w-4" />
+                Sort by
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => sortInvestments("title")}>
+                Title
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => sortInvestments("percentage")}>
+                Percentage
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {adjustedInvestments !== null && <SaveOrCancelChanges />}
