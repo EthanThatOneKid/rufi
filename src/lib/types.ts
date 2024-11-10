@@ -7,17 +7,19 @@ export interface Investment {
 }
 
 export interface Transaction {
-  userID: string;
-  transactionID: string;
-  timestamp: number;
-  bankID: string;
-  productDescription: string;
-  price: number;
+  username: string;
+  transaction_id: string;
+  timestamp: string;
+  bank: string;
+  product: string;
+  price: string;
+  processed: number;
 }
 
 export interface Statement {
   id: string;
   title: string;
+
   // TODO: Include period property to represent the statement date range.
   investments: Investment[];
   transactions: Transaction[];

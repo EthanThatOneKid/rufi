@@ -1,10 +1,10 @@
 import { CircleDollarSignIcon } from "lucide-react";
-import type { Statement } from "@/lib/types";
+import type { Statement, Transaction } from "@/lib/types";
 
 /**
- * fetchExampleStatement fetches an example statement from the server.
+ * fetchExampleTransactions fetches an example transactions list from the server.
  */
-export async function fetchExampleStatement(): Promise<Statement> {
+export async function fetchExampleTransactions(): Promise<Transaction[]> {
   return await fetch("/api/getusertransaction?username=bob").then((response) =>
     response.json()
   );
@@ -31,20 +31,22 @@ export const exampleStatement: Statement = {
   ],
   transactions: [
     {
-      userID: "1",
-      transactionID: "1",
-      timestamp: 1605549492,
-      bankID: "1",
-      productDescription: "Starbucks",
-      price: 5.99,
+      username: "bob",
+      transaction_id: "1",
+      timestamp: "2024-11-10T17:36:04.000Z",
+      bank: "Wells Fargo",
+      product: "Starbucks",
+      price: "5.99",
+      processed: 0,
     },
     {
-      userID: "1",
-      transactionID: "2",
-      timestamp: 1605549492,
-      bankID: "1",
-      productDescription: "Apple",
-      price: 10.99,
+      username: "bob",
+      transaction_id: "2",
+      timestamp: "2024-11-10T17:36:04.000Z",
+      bank: "Wells Fargo",
+      product: "Apple",
+      price: "10.99",
+      processed: 0,
     },
   ],
 };

@@ -108,7 +108,7 @@ function getDifference(adjustedInvestment: AdjustedInvestment) {
   return adjustedInvestment.percentage - adjustedInvestment.adjustedPercentage;
 }
 
-const exampleInvestments: Investment[] = [
+export const exampleInvestments: Investment[] = [
   {
     id: "1",
     title: "Bitcoin",

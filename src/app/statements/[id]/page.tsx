@@ -1,20 +1,32 @@
+"use client";
+
 import { Suspense, useState, useEffect } from "react";
 import { StatementView } from "@/components/statement-view";
-import { fetchExampleStatement } from "@/lib/example-statement-data";
-import type { Statement } from "@/lib/types";
+import { fetchExampleTransactions } from "@/lib/example-statement-data";
+import type { Transaction } from "@/lib/types";
+import { exampleInvestments } from "@/components/investments-manager";
 
 function StatementPage() {
-  const [statement, setStatement] = useState<Statement | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[] | null>(null);
 
   useEffect(() => {
-    fetchExampleStatement().then((data) => setStatement(data));
+    fetchExampleTransactions().then((data) => setTransactions(data));
   }, []);
 
-  if (!statement) {
+  if (!transactions) {
     return <div>Loading...</div>;
   }
 
-  return <StatementView statement={statement} />;
+  return (
+    <StatementView
+      statement={{
+        id: "1",
+        title: "November 2024",
+        investments: exampleInvestments,
+        transactions,
+      }}
+    />
+  );
 }
 
 export default function SuspenseWrapper() {

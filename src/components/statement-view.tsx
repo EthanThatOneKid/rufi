@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import type { Statement } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -17,7 +16,7 @@ export interface StatementViewProps {
   statement: Statement;
 }
 
-export function StatementView({ statement }: StatementViewProps) {
+export function StatementView(props: StatementViewProps) {
   return (
     <div className="space-y-8 p-6 bg-gray-50 rounded-lg shadow-md">
       {/* Investments Section */}
@@ -32,9 +31,9 @@ export function StatementView({ statement }: StatementViewProps) {
             Investments
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {statement.investments.map((investment) => (
+            {props.statement.investments.map((investment) => (
               <Card
-                key={investment.id}
+                key={`investment-${investment.id}`}
                 className="transition-transform duration-200 transform hover:scale-105 hover:shadow-lg bg-gray-100 rounded-lg"
               >
                 <CardContent className="p-5 flex items-center space-x-4">
@@ -76,13 +75,13 @@ export function StatementView({ statement }: StatementViewProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {statement.transactions.map((transaction) => (
+              {props.statement.transactions.map((transaction) => (
                 <TableRow
-                  key={transaction.transactionID}
+                  key={transaction.transaction_id}
                   className="transition-colors hover:bg-gray-50"
                 >
                   <TableCell className="p-4 font-medium text-gray-800">
-                    {transaction.productDescription}
+                    {transaction.product}
                   </TableCell>
                   <TableCell className="p-4 text-right font-semibold text-gray-800">
                     <span className="inline-flex items-center text-green-600">
