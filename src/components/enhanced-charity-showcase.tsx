@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dialog';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 
-interface Charity {
+interface Showcase {
   id: number;
   name: string;
   description: string;
@@ -30,7 +30,7 @@ interface Charity {
   impact: string;
 }
 
-const charities: Charity[] = [
+const charities: Showcase[] = [
   {
     id: 1,
     name: 'Ocean Cleanup',
@@ -79,7 +79,7 @@ const charities: Charity[] = [
   },
 ];
 
-const cryptocurrencies: Charity[] = [
+const cryptocurrencies: Showcase[] = [
   {
     id: 1,
     name: 'Bitcoin',
@@ -129,7 +129,15 @@ const cryptocurrencies: Charity[] = [
   },
 ];
 
-function CharityCard({ charity }: { charity: Charity }) {
+function CharityCard({
+  charity,
+  isSelected,
+  onSelect,
+}: {
+  charity: Showcase;
+  isSelected: boolean;
+  onSelect: () => void;
+}) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const nextImage = () => {
@@ -146,7 +154,14 @@ function CharityCard({ charity }: { charity: Charity }) {
   };
 
   return (
-    <Card className='flex flex-col overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1'>
+    <Card
+      onClick={onSelect}
+      className={`flex flex-col overflow-hidden transition-all duration-300 transform 
+      ${
+        isSelected
+          ? 'border-4 border-blue-500 scale-105'
+          : 'hover:shadow-lg hover:-translate-y-1'
+      } cursor-pointer`}>
       <div className='relative h-48 overflow-hidden group'>
         <Image
           src={charity.images[currentImageIndex]}
@@ -177,7 +192,7 @@ function CharityCard({ charity }: { charity: Charity }) {
       </CardContent>
       <CardFooter className='flex justify-between items-center'>
         <span className='text-sm text-muted-foreground'>{charity.impact}</span>
-        <Dialog>
+        {/* <Dialog>
           <DialogTrigger asChild>
             <Button variant='outline'>Learn More</Button>
           </DialogTrigger>
@@ -205,30 +220,63 @@ function CharityCard({ charity }: { charity: Charity }) {
               </Button>
             </div>
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
       </CardFooter>
     </Card>
   );
 }
 
 export function EnhancedCharityShowcaseComponent() {
+  const [selectedCharity, setSelectedCharity] = useState<number | null>(null);
+  const [selectedCrypto, setSelectedCrypto] = useState<number | null>(null);
+
+  // Function to handle selection and delay the alert
+  const handleSelect = (id: number, type: 'charity' | 'crypto') => {
+    if (type === 'charity') {
+      setSelectedCharity(id);
+      const selected = charities.find((charity) => charity.id === id);
+      setTimeout(() => {
+        alert(`Selected Charity: ${selected?.name}`);
+      }, 300); // Delay alert by 300ms to allow border change
+    } else if (type === 'crypto') {
+      setSelectedCrypto(id);
+      const selected = cryptocurrencies.find((crypto) => crypto.id === id);
+      setTimeout(() => {
+        alert(`Selected Cryptocurrency: ${selected?.name}`);
+      }, 300); // Delay alert by 300ms to allow border change
+    }
+  };
+
   return (
     <>
+      {/* Charity Section */}
       <div className='container mx-auto px-4 py-8'>
         <h1 className='text-3xl font-bold text-center mb-8'>
           Charities We Support
         </h1>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
           {charities.map((charity) => (
-            <CharityCard key={charity.id} charity={charity} />
+            <CharityCard
+              key={charity.id}
+              charity={charity}
+              isSelected={selectedCharity === charity.id}
+              onSelect={() => handleSelect(charity.id, 'charity')}
+            />
           ))}
         </div>
       </div>
+
+      {/* Cryptocurrency Section */}
       <div className='container mx-auto px-4 py-8'>
-        <h1 className='text-3xl font-bold text-center mb-8'>Crypto Currency</h1>
+        <h1 className='text-3xl font-bold text-center mb-8'>Cryptocurrency</h1>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {cryptocurrencies.map((charity) => (
-            <CharityCard key={charity.id} charity={charity} />
+          {cryptocurrencies.map((crypto) => (
+            <CharityCard
+              key={crypto.id}
+              charity={crypto}
+              isSelected={selectedCrypto === crypto.id}
+              onSelect={() => handleSelect(crypto.id, 'crypto')}
+            />
           ))}
         </div>
       </div>
