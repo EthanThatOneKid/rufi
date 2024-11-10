@@ -98,7 +98,7 @@ def create_additional_tables():
                 email VARCHAR(255) NOT NULL,
                 card_no VARCHAR(16),
                 CVV VARCHAR(4),
-                card_expiry DATE,
+                card_expiry VARCHAR(7),
                 bank_account_no VARCHAR(20),
                 crypto_percentage DECIMAL(5, 2),
                 charity_percentage DECIMAL(5, 2)
