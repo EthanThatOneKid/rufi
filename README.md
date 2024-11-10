@@ -7,6 +7,10 @@ Round-Up for Impact, or Rufi for short, is a web application that allows users t
 First, run the development server:
 
 ```bash
+# Install dependencies.
+npm i --force
+
+# Then run the development server.
 npm run dev
 # or
 yarn dev

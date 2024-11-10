@@ -1,7 +1,7 @@
 // src/pages/signup.tsx
 
-import { InvestmentPortfolioComponent } from '@/components/investment-portfolio';
+import { InvestmentsManager } from "@/components/investments-manager";
 
 export default function SignUpPage() {
-  return <InvestmentPortfolioComponent />;
+  return <InvestmentsManager />;
 }
