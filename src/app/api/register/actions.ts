@@ -32,20 +32,13 @@ export async function registerUser(userData: unknown) {
     // 2. Hash the password
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(validatedData.password, salt)
-    const exampleDate = new Date()
    
     const [result]: any = await connection.execute(
-      'INSERT INTO user_table (username, email, password, card_number, CVV, card_expiry, bank_account_no, crypto_percentage, charity_percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO user_table (username, email, password, card_no, CVV, card_expiry, bank_account_no, crypto_percentage, charity_percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [validatedData.username, validatedData.email, hashedPassword,validatedData.card_number,validatedData.cvv,validatedData.card_expiry,validatedData.bank_account_no,validatedData.crypto_percentage,validatedData.charity_percentage]
     )
 
     return { success: true, userId: result.insertId }
-    // 3. Store the user in the database
-    // 4. Create a session or token
-
-    console.log('User registered:', validatedData.username)
-
-    return { success: true }
   } catch (error) {
     if (error instanceof z.ZodError) {
       return { success: false, error: error.errors }

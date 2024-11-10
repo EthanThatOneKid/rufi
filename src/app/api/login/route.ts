@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { loginUser } from './actions'
 
-
 export async function POST(request: Request) {
   try {
     const body = await request.json()
