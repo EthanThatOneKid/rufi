@@ -9,6 +9,7 @@ import {
   Trash,
   Lock,
   LockOpen,
+  SparklesIcon,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -142,7 +143,8 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
     AdjustedInvestment[] | null
   >(null);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isAddInvestmentDialogOpen, setIsAddInvestmentDialogOpen] =
+    useState(false);
 
   function sortInvestments(sortBy: "title" | "percentage") {
     setInvestments((prevInvestments) => {
@@ -218,9 +220,11 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
         <div className="flex space-x-2">
           <Link href="/statements">
             <Button variant="outline">View statements</Button>
-          </Link>
-
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          </Link>{" "}
+          <Dialog
+            open={isAddInvestmentDialogOpen}
+            onOpenChange={setIsAddInvestmentDialogOpen}
+          >
             <DialogTrigger asChild>
               <Button variant="outline" disabled={adjustedInvestments !== null}>
                 Add investment
@@ -246,13 +250,12 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
                     ]);
 
                     // Close the dialog.
-                    setDialogOpen(false);
+                    setIsAddInvestmentDialogOpen(false);
                   }}
                 />
               </div>
             </DialogContent>
-          </Dialog>
-
+          </Dialog>{" "}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" disabled={adjustedInvestments !== null}>
