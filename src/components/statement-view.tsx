@@ -1,50 +1,99 @@
-import React from "react";
-import type { Statement } from "@/lib/types";
+'use client';
+
+import React from 'react';
+import type { Statement } from '@/lib/types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { CreditCard } from 'lucide-react';
 
 export interface StatementViewProps {
   statement: Statement;
 }
 
-export default function StatementView(props: StatementViewProps) {
+export function StatementView({ statement }: StatementViewProps) {
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Your statement</h2>
-      <table className="min-w-full bg-white">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border-b">Investment Icon</th>
-            <th className="py-2 px-4 border-b">Investment Title</th>
-            <th className="py-2 px-4 border-b">Investment Percentage</th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.statement.investments.map((investment) => (
-            <tr key={investment.id}>
-              <td className="py-2 px-4 border-b">{investment.icon}</td>
-              <td className="py-2 px-4 border-b">{investment.title}</td>
-              <td className="py-2 px-4 border-b">{investment.percentage}%</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <table className="min-w-full bg-white mt-4">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border-b">Product Description</th>
-            <th className="py-2 px-4 border-b">Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.statement.transactions.map((transaction) => (
-            <tr key={transaction.transactionID}>
-              <td className="py-2 px-4 border-b">
-                {transaction.productDescription}
-              </td>
-              <td className="py-2 px-4 border-b">{transaction.price}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className='space-y-8 p-6 bg-gray-50 rounded-lg shadow-md'>
+      {/* Investments Section */}
+      <Card className='bg-white rounded-lg shadow-lg'>
+        <CardHeader className='p-4 border-b border-gray-200'>
+          <CardTitle className='text-2xl font-bold text-gray-800'>
+            Your Statement
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <h3 className='text-xl font-semibold mb-4 text-gray-700'>
+            Investments
+          </h3>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+            {statement.investments.map((investment) => (
+              <Card
+                key={investment.id}
+                className='transition-transform duration-200 transform hover:scale-105 hover:shadow-lg bg-gray-100 rounded-lg'>
+                <CardContent className='p-5 flex items-center space-x-4'>
+                  <div className='bg-gray-200 p-3 rounded-full'>
+                    {investment.icon}
+                  </div>
+                  <div>
+                    <h4 className='font-medium text-gray-800'>
+                      {investment.title}
+                    </h4>
+                    <p className='text-sm text-gray-600'>
+                      {investment.percentage}%
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Transactions Section */}
+      <Card className='bg-white rounded-lg shadow-lg'>
+        <CardHeader className='p-4 border-b border-gray-200'>
+          <CardTitle className='text-xl font-semibold text-gray-700'>
+            Transactions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table className='w-full'>
+            <TableHeader>
+              <TableRow className='bg-gray-100'>
+                <TableHead className='p-4 text-left text-gray-600'>
+                  Product Description
+                </TableHead>
+                <TableHead className='p-4 text-right text-gray-600'>
+                  Price
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {statement.transactions.map((transaction) => (
+                <TableRow
+                  key={transaction.transactionID}
+                  className='transition-colors hover:bg-gray-50'>
+                  <TableCell className='p-4 font-medium text-gray-800'>
+                    {transaction.productDescription}
+                  </TableCell>
+                  <TableCell className='p-4 text-right font-semibold text-gray-800'>
+                    <span className='inline-flex items-center text-green-600'>
+                      <CreditCard className='h-4 w-4 mr-1' />$
+                      {transaction.price}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }
