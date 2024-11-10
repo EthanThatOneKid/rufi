@@ -14,6 +14,8 @@ import {
   Euro,
   Gem,
   PoundSterling,
+  Lock,
+  LockOpen,
 } from "lucide-react";
 
 interface Investment {
@@ -27,6 +29,12 @@ interface Investment {
 interface AdjustedInvestment extends Investment {
   isLocked: boolean;
   adjustedPercentage: number;
+}
+
+function getCurrentPercentage(investment: Investment | AdjustedInvestment) {
+  return "adjustedPercentage" in investment
+    ? investment.adjustedPercentage
+    : investment.percentage;
 }
 
 /**
@@ -61,20 +69,22 @@ function adjustInvestments(
   // Calculate the proportional difference between the new value and the current value
   // to adjust the other investments accordingly such that they total` 100%.
   const difference = value - investments[adjustedInvestmentIndex].percentage;
-  const unlockedInvestmentsLength = investments.filter(
+  const { length: unlockedInvestmentsLength } = investments.filter(
     (investment) => !("isLocked" in investment && investment.isLocked)
-  ).length;
+  );
   const adjustedInvestments = investments.map((investment) => {
     const isLocked = ("isLocked" in investment && investment.isLocked) ?? false;
     return {
       ...investment,
       adjustedPercentage:
-        investment.id === id || isLocked
+        investment.id === id
           ? value
+          : isLocked
+          ? getCurrentPercentage(investment)
           : adjustInvestment(
               investment.percentage,
               difference,
-              unlockedInvestmentsLength
+              Math.max(unlockedInvestmentsLength, 1)
             ),
       isLocked,
     };
@@ -186,6 +196,38 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
     setAdjustedInvestments(null);
   }
 
+  function handleToggleLockAt(index: number) {
+    setAdjustedInvestments((prevAdjustedInvestments) => {
+      if (prevAdjustedInvestments === null) {
+        return null;
+      }
+
+      const adjustedInvestment = prevAdjustedInvestments[index];
+      const isLocked = !adjustedInvestment.isLocked;
+      return prevAdjustedInvestments.map((investment, i) => {
+        return i === index ? { ...investment, isLocked } : investment;
+      });
+    });
+  }
+
+  function SaveOrCancelChanges() {
+    return (
+      <div className="bg-card rounded-lg p-4 shadow-sm">
+        <Button onClick={handleConfirmChanges}>
+          <span className="mr-2">Save changes</span>
+        </Button>
+
+        <Button variant="outline" onClick={handleCancelChanges}>
+          <span className="mr-2">Cancel changes</span>
+        </Button>
+
+        <p className="text-muted-foreground text-sm mt-2">
+          Confirm or cancel your changes.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
       <h1 className="text-2xl font-bold mb-4">Round-Up for Impact</h1>
@@ -216,21 +258,7 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
         </DropdownMenu>
       </div>
 
-      {adjustedInvestments !== null && (
-        <div className="bg-card rounded-lg p-4 shadow-sm">
-          <Button onClick={handleConfirmChanges}>
-            <span className="mr-2">Save changes</span>
-          </Button>
-
-          <Button variant="outline" onClick={handleCancelChanges}>
-            <span className="mr-2">Cancel changes</span>
-          </Button>
-
-          <p className="text-muted-foreground text-sm mt-2">
-            Confirm or cancel your changes.
-          </p>
-        </div>
-      )}
+      {adjustedInvestments !== null && <SaveOrCancelChanges />}
 
       <ul className="space-y-6">
         {investments.map((investment, i) => (
@@ -244,7 +272,9 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
               </div>
               <span className="font-bold text-lg">
                 {adjustedInvestments !== null ? (
-                  getDifference(adjustedInvestments[i]) > 0 ? (
+                  getDifference(adjustedInvestments[i]) === 0 ? (
+                    <em>Unchanged</em>
+                  ) : getDifference(adjustedInvestments[i]) > 0 ? (
                     <span className="text-red-500">
                       (-{getDifference(adjustedInvestments[i])}%)
                     </span>
@@ -258,10 +288,20 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
                 )}{" "}
                 {adjustedInvestments?.[i]?.adjustedPercentage ??
                   investment.percentage}
-                %
+                %{" "}
+                {adjustedInvestments !== null && (
+                  <Button onClick={() => handleToggleLockAt(i)}>
+                    {adjustedInvestments?.[i]?.isLocked ? (
+                      <Lock className="h-6 w-6" />
+                    ) : (
+                      <LockOpen className="h-6 w-6" />
+                    )}
+                  </Button>
+                )}
               </span>
             </div>
             <Slider
+              disabled={adjustedInvestments?.[i]?.isLocked}
               min={0}
               max={100}
               step={1}
@@ -278,6 +318,8 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
           </li>
         ))}
       </ul>
+
+      {adjustedInvestments !== null && <SaveOrCancelChanges />}
     </div>
   );
 }
