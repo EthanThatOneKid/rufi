@@ -38,9 +38,11 @@ function adjustInvestment(
   percentageDifference: number,
   percentagesLength: number
 ) {
-  return Math.max(
-    0,
-    Math.min(100, percentage - percentageDifference / (percentagesLength - 1))
+  return Math.floor(
+    Math.max(
+      0,
+      Math.min(100, percentage - percentageDifference / (percentagesLength - 1))
+    )
   );
 }
 
@@ -49,28 +51,45 @@ function adjustInvestments(
   id: string,
   value: number
 ): AdjustedInvestment[] {
-  const investment = investments.find((investment) => investment.id === id);
-  if (investment === undefined) {
+  const adjustedInvestmentIndex = investments.findIndex(
+    (investment) => investment.id === id
+  );
+  if (adjustedInvestmentIndex === -1) {
     throw new Error(`Investment with id ${id} not found`);
   }
 
   // Calculate the proportional difference between the new value and the current value
   // to adjust the other investments accordingly such that they total` 100%.
-  const difference = value - investment.percentage;
-  return investments.map((investment) => {
+  const difference = value - investments[adjustedInvestmentIndex].percentage;
+  const unlockedInvestmentsLength = investments.filter(
+    (investment) => !("isLocked" in investment && investment.isLocked)
+  ).length;
+  const adjustedInvestments = investments.map((investment) => {
+    const isLocked = ("isLocked" in investment && investment.isLocked) ?? false;
     return {
       ...investment,
       adjustedPercentage:
-        investment.id === id
+        investment.id === id || isLocked
           ? value
           : adjustInvestment(
               investment.percentage,
               difference,
-              investments.length
+              unlockedInvestmentsLength
             ),
-      isLocked: ("isLocked" in investment && investment.isLocked) ?? false,
+      isLocked,
     };
   });
+
+  const total = adjustedInvestments.reduce(
+    (acc, investment) => acc + investment.adjustedPercentage,
+    0
+  );
+  if (total < 100) {
+    adjustedInvestments[adjustedInvestmentIndex].adjustedPercentage +=
+      100 - total;
+  }
+
+  return adjustedInvestments;
 }
 
 function getDifference(adjustedInvestment: AdjustedInvestment) {
@@ -116,7 +135,7 @@ const exampleInvestments: Investment[] = [
 ];
 
 export interface InvestmentPortfolioProps {
-  investments: Investment[];
+  investments?: Investment[];
 }
 
 export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
@@ -135,16 +154,13 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
 
   function sortInvestments(sortBy: "title" | "percentage") {
     setInvestments((prevInvestments) => {
-      const sortedInvestments = [...prevInvestments];
-      sortedInvestments.sort((a, b) => {
+      return prevInvestments.toSorted((a, b) => {
         if (sortBy === "title") {
           return a.title.localeCompare(b.title);
         } else {
           return b.percentage - a.percentage;
         }
       });
-
-      return sortedInvestments;
     });
   }
 
@@ -176,11 +192,15 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
 
       <div className="flex justify-between items-center mb-4">
         <p className="text-sm text-muted-foreground">
-          Adjust the sliders to change investment percentages
+          Adjust the sliders to change investment percentages.
         </p>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={adjustedInvestments !== null}
+            >
               <ArrowUpDown className="mr-2 h-4 w-4" />
               Sort by
             </Button>
@@ -196,6 +216,22 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
         </DropdownMenu>
       </div>
 
+      {adjustedInvestments !== null && (
+        <div className="bg-card rounded-lg p-4 shadow-sm">
+          <Button onClick={handleConfirmChanges}>
+            <span className="mr-2">Save changes</span>
+          </Button>
+
+          <Button variant="outline" onClick={handleCancelChanges}>
+            <span className="mr-2">Cancel changes</span>
+          </Button>
+
+          <p className="text-muted-foreground text-sm mt-2">
+            Confirm or cancel your changes.
+          </p>
+        </div>
+      )}
+
       <ul className="space-y-6">
         {investments.map((investment, i) => (
           <li key={investment.id} className="bg-card rounded-lg p-4 shadow-sm">
@@ -207,9 +243,6 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
                 <span className="font-medium">{investment.title}</span>
               </div>
               <span className="font-bold text-lg">
-                {adjustedInvestments?.[i]?.adjustedPercentage ??
-                  investment.percentage}
-                %{" "}
                 {adjustedInvestments !== null ? (
                   getDifference(adjustedInvestments[i]) > 0 ? (
                     <span className="text-red-500">
@@ -222,7 +255,10 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
                   )
                 ) : (
                   ""
-                )}
+                )}{" "}
+                {adjustedInvestments?.[i]?.adjustedPercentage ??
+                  investment.percentage}
+                %
               </span>
             </div>
             <Slider
@@ -242,14 +278,6 @@ export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
           </li>
         ))}
       </ul>
-
-      {adjustedInvestments !== null && (
-        <div>
-          {/* Confirmation dialog */}
-          <button onClick={handleConfirmChanges}>Confirm</button>
-          <button onClick={handleCancelChanges}>Cancel</button>
-        </div>
-      )}
     </div>
   );
 }
