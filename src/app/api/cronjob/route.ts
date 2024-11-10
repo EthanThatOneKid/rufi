@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { NextResponse } from 'next/server'
-import { getSingleStoreConnection } from '../../lib/db';
+import { getSingleStoreConnection } from '../../../lib/db';
 
 export async function GET(req: Request) {
     try {
