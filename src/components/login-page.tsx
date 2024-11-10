@@ -1,8 +1,8 @@
-'use client';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+"use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -10,22 +10,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function LoginPageComponent() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
+      const response = await fetch("/api/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
       });
@@ -34,21 +34,21 @@ export function LoginPageComponent() {
 
       if (response.ok) {
         // If the login was successful, redirect to the homepage
-        setError('');
-        window.location.href = '/'; // Redirect to home page or dashboard
+        setError("");
+        window.location.href = "/dashboard"; // Redirect to home page or dashboard
       } else {
         // If there's an error (e.g., 401), parse and show it
         const data = await response.json();
-        setError(data.error || 'Invalid username or password');
+        setError(data.error || "Invalid username or password");
       }
     } catch (err) {
-      setError('An error occurred during login. Please try again.');
+      setError("An error occurred during login. Please try again.");
     }
   };
 
   return (
-    <div className='flex items-center justify-center min-h-screen bg-gray-100'>
-      <Card className='w-[350px]'>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>Login</CardTitle>
           <CardDescription>
@@ -56,34 +56,34 @@ export function LoginPageComponent() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className='space-y-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='username'>Username</Label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
               <Input
-                id='username'
+                id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>
-            <div className='space-y-2'>
-              <Label htmlFor='password'>Password</Label>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
               <Input
-                id='password'
-                type='password'
+                id="password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
-            <Button type='submit' className='w-full'>
+            <Button type="submit" className="w-full">
               Login
             </Button>
           </form>
         </CardContent>
         <CardFooter>
           {error && (
-            <Alert variant='destructive'>
+            <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
