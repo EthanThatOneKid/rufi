@@ -136,6 +136,16 @@ export default function LandingPage() {
           </Link>
         </div>
       </section>
+      <div className="fixed bottom-10 right-10">
+        <Link href="/dain">
+          <Button
+            size="lg"
+            className="bg-blue-800 text-white hover:bg-blue-700 duration-300 z-50"
+          >
+            AI stock analysis tool
+          </Button>
+        </Link>
+      </div>
 
       {/* Footer Section */}
       <footer className="bg-gray-800 text-white py-10">
