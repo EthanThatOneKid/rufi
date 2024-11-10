@@ -24,6 +24,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Separator } from '@/components/ui/separator';
+import { startAnyoneClient } from '@/lib/anon';
+import { AnonSocksClient } from '@anyone-protocol/anyone-client';
 
 const signUpSchema = z
   .object({
@@ -77,9 +79,23 @@ export function SignUpForm() {
     },
   });
 
+  async function signUp() {
+    console.log('started');
+    const anon = await startAnyoneClient();
+    const anonSocksClient = new AnonSocksClient(anon);
+    try {
+      const response = await anonSocksClient.get('https://google.com');
+
+      console.log('Database response:', response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      await anon.stop();
+    }
+  }
+
   const onSubmit = (data: SignUpForm) => {
-    console.log(data);
-    alert('Form submitted successfully!');
+    signUp();
   };
 
   return (
@@ -142,7 +158,7 @@ export function SignUpForm() {
                       {['chase', 'wellsfargo', 'bankofamerica'].map((bank) => (
                         <div key={bank} className='flex items-center space-x-3'>
                           <Checkbox
-                            checked={field.value.includes(bank)}
+                            checked={(field.value as string[]).includes(bank)}
                             onCheckedChange={(checked) => {
                               const newValue = checked
                                 ? [...field.value, bank]
