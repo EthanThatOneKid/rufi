@@ -9,6 +9,7 @@ import {
   Trash,
   Lock,
   LockOpen,
+  SparklesIcon,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -142,7 +143,8 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
     AdjustedInvestment[] | null
   >(null);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isAddInvestmentDialogOpen, setIsAddInvestmentDialogOpen] =
+    useState(false);
 
   function sortInvestments(sortBy: "title" | "percentage") {
     setInvestments((prevInvestments) => {
@@ -220,11 +222,33 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
         </p>
 
         <div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" disabled={adjustedInvestments !== null}>
+                <SparklesIcon className="h-6 w-6" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-5xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Chat with AI</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <p>
+                  Enter your command into the chat box below. For example, you
+                  can ask to adjust the percentage of your Rufi portfolio
+                  investments.
+                  <strong>Coming soon!</strong>
+                </p>
+              </div>
+            </DialogContent>
+          </Dialog>{" "}
           <Link href="/statements">
             <Button variant="outline">View statements</Button>
-          </Link>
-
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          </Link>{" "}
+          <Dialog
+            open={isAddInvestmentDialogOpen}
+            onOpenChange={setIsAddInvestmentDialogOpen}
+          >
             <DialogTrigger asChild>
               <Button variant="outline" disabled={adjustedInvestments !== null}>
                 Add investment
@@ -250,13 +274,12 @@ export function InvestmentsManager(props: InvestmentsManagerProps) {
                     ]);
 
                     // Close the dialog.
-                    setDialogOpen(false);
+                    setIsAddInvestmentDialogOpen(false);
                   }}
                 />
               </div>
             </DialogContent>
-          </Dialog>
-
+          </Dialog>{" "}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" disabled={adjustedInvestments !== null}>
