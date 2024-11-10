@@ -14,21 +14,24 @@ export default function LandingPage() {
         }}
       >
         <div
-          className="container mx-auto px-4"
+          className="container mx-auto px-4 flex items-center"
           style={{ color: "rgb(7 31 92)" }}
         >
-          <h1 className="text-5xl font-bold mb-4">
-            Round-Up for <em>Impact</em>
-          </h1>
-          <p className="text-lg mb-10">
-            We are future of financial <em>freedom</em>.
-          </p>
-          <Link href="/signup" className="text-black hover:underline">
-            <Button>Sign up for free!</Button>
-          </Link>{" "}
-          <Link href="/login" className="text-black hover:underline">
-            <Button variant="outline">Login</Button>
-          </Link>
+          <img src="/rufi.png" alt="Company Logo" className="mb-8 mr-8 w-1/3" />
+          <div>
+            <h1 className="text-5xl font-bold mb-4">
+              Round-Up for <em>Impact</em>
+            </h1>
+            <p className="text-lg mb-10">
+              We are future of financial <em>freedom</em>.
+            </p>
+            <Link href="/signup" className="text-black hover:underline">
+              <Button>Sign up for free!</Button>
+            </Link>{" "}
+            <Link href="/login" className="text-black hover:underline">
+              <Button variant="outline">Login</Button>
+            </Link>
+          </div>
         </div>
       </section>
 
