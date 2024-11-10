@@ -227,24 +227,26 @@ function CharityCard({
 }
 
 export function EnhancedCharityShowcaseComponent() {
-  const [selectedCharity, setSelectedCharity] = useState<number | null>(null);
-  const [selectedCrypto, setSelectedCrypto] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{
+    id: number;
+    type: 'charity' | 'crypto';
+  } | null>(null);
 
   // Function to handle selection and delay the alert
   const handleSelect = (id: number, type: 'charity' | 'crypto') => {
-    if (type === 'charity') {
-      setSelectedCharity(id);
-      const selected = charities.find((charity) => charity.id === id);
-      setTimeout(() => {
-        alert(`Selected Charity: ${selected?.name}`);
-      }, 300); // Delay alert by 300ms to allow border change
-    } else if (type === 'crypto') {
-      setSelectedCrypto(id);
-      const selected = cryptocurrencies.find((crypto) => crypto.id === id);
-      setTimeout(() => {
-        alert(`Selected Cryptocurrency: ${selected?.name}`);
-      }, 300); // Delay alert by 300ms to allow border change
-    }
+    setSelectedItem({ id, type });
+    const selected =
+      type === 'charity'
+        ? charities.find((charity) => charity.id === id)
+        : cryptocurrencies.find((crypto) => crypto.id === id);
+
+    setTimeout(() => {
+      alert(
+        `Selected ${type === 'charity' ? 'Charity' : 'Cryptocurrency'}: ${
+          selected?.name
+        }`
+      );
+    }, 300); // Delay alert by 300ms to allow border change
   };
 
   return (
@@ -259,7 +261,10 @@ export function EnhancedCharityShowcaseComponent() {
             <CharityCard
               key={charity.id}
               charity={charity}
-              isSelected={selectedCharity === charity.id}
+              isSelected={
+                selectedItem?.id === charity.id &&
+                selectedItem?.type === 'charity'
+              }
               onSelect={() => handleSelect(charity.id, 'charity')}
             />
           ))}
@@ -274,7 +279,10 @@ export function EnhancedCharityShowcaseComponent() {
             <CharityCard
               key={crypto.id}
               charity={crypto}
-              isSelected={selectedCrypto === crypto.id}
+              isSelected={
+                selectedItem?.id === crypto.id &&
+                selectedItem?.type === 'crypto'
+              }
               onSelect={() => handleSelect(crypto.id, 'crypto')}
             />
           ))}
