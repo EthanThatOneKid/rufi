@@ -37,9 +37,15 @@ export function SignalDataView() {
   }
 
   return (
-    <div>
-      <h2>Signal Data</h2>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+    <div className='p-4 bg-white shadow-md rounded-lg'>
+      <h2 className='text-2xl font-bold mb-4'>DAIN, AI stock signals</h2>
+      <ul className='list-disc pl-5'>
+        {Array.from(data).map(([stock, signal]) => (
+          <li key={stock} className='mb-2'>
+            <span className='font-semibold'>{stock}:</span> {signal}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
