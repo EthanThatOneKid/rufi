@@ -143,11 +143,11 @@ const exampleInvestments: Investment[] = [
   },
 ];
 
-export interface InvestmentPortfolioProps {
+export interface InvestmentsManagerProps {
   investments?: Investment[];
 }
 
-export function InvestmentPortfolio(props: InvestmentPortfolioProps) {
+export function InvestmentsManager(props: InvestmentsManagerProps) {
   const [investments, setInvestments] = useState<Investment[]>([
     ...(props.investments ?? exampleInvestments),
   ]);
