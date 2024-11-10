@@ -14,7 +14,7 @@ def get_singlestore_connection():
         print(f"Error connecting to SingleStore: {e}")
         return None
 
-def drop_all_tables():
+def create_signals_table():
     connection = get_singlestore_connection()
     if not connection:
         print("Failed to establish a connection to SingleStore.")
@@ -22,19 +22,23 @@ def drop_all_tables():
 
     try:
         with connection.cursor() as cursor:
-            # Drop each table if it exists
-            tables = ["transactions", "supported_charities", "supported_crypto", "user_pref_charity", "user_pref_crypto", "user_table", "signals"]
-            for table in tables:
-                query = f"DROP TABLE IF EXISTS {table};"
-                cursor.execute(query)
-                print(f"Table '{table}' dropped successfully.")
-
+            # Define the CREATE TABLE SQL command for signals table with `signal` column escaped
+            query = """
+            CREATE TABLE IF NOT EXISTS signals (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                stock VARCHAR(10) NOT NULL,
+                `signal` VARCHAR(10) NOT NULL,
+                algorithm VARCHAR(50) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+            cursor.execute(query)
         connection.commit()
-        print("All tables dropped successfully.")
+        print("Table 'signals' created successfully.")
     except Exception as e:
-        print(f"Error dropping tables in SingleStore: {e}")
+        print(f"Error creating table in SingleStore: {e}")
     finally:
         connection.close()
 
-# Run to drop all tables
-drop_all_tables()
+# Run to create the 'signals' table
+create_signals_table()
