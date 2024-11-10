@@ -73,9 +73,9 @@ def create_additional_tables():
             # Create user_pref_charity table if it doesn't exist (without foreign key constraint)
             query_user_pref_charity = """
             CREATE TABLE IF NOT EXISTS user_pref_charity (
-                user_id VARCHAR(36),
+                username VARCHAR(50),
                 charity_id VARCHAR(36),
-                PRIMARY KEY (user_id, charity_id)
+                PRIMARY KEY (username, charity_id)
             );
             """
             cursor.execute(query_user_pref_charity)
@@ -83,9 +83,9 @@ def create_additional_tables():
             # Create user_pref_crypto table if it doesn't exist (without foreign key constraint)
             query_user_pref_crypto = """
             CREATE TABLE IF NOT EXISTS user_pref_crypto (
-                user_id VARCHAR(36),
+                username VARCHAR(50),
                 crypto_id VARCHAR(36),
-                PRIMARY KEY (user_id, crypto_id)
+                PRIMARY KEY (username, crypto_id)
             );
             """
             cursor.execute(query_user_pref_crypto)
@@ -93,7 +93,6 @@ def create_additional_tables():
             # Create user_table if it doesn't exist without additional unique constraint on email
             query_user_table = """
             CREATE TABLE IF NOT EXISTS user_table (
-                user_id VARCHAR(36) PRIMARY KEY,
                 username VARCHAR(50) NOT NULL,
                 password VARCHAR(255) NOT NULL,
                 email VARCHAR(255) NOT NULL,
