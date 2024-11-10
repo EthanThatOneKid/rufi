@@ -5,45 +5,41 @@ export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
   // Extract specific query parameters
-  const entity = searchParams.get('entity');
+  const name = searchParams.get('name');
   const category = searchParams.get('category');
   const url = searchParams.get('url');
   const description = searchParams.get('description');
 
-  if (category == 'charity') {
-    const connection = await getSingleStoreConnection();
-    if (!connection) {
-      throw new Error('Failed to establish database connection');
+    if(category== "charity"){
+        const connection = await getSingleStoreConnection();
+        if (!connection) {
+            throw new Error('Failed to establish database connection');
+        }
+    
+        const [result]: any = await connection.execute(
+        'INSERT INTO supported_charities (charity_name, url, category, description) VALUES (?, ?, ?, ?)',
+        [name, url, category,description]
+      )
+      return NextResponse.json({ message: 'charity entity added successfully' }, { status: 201 })
+    }
+    
+    if(category== "crypto"){
+        const connection = await getSingleStoreConnection();
+        if (!connection) {
+            throw new Error('Failed to establish database connection');
+        }
+    
+        const [result]: any = await connection.execute(
+        'INSERT INTO supported_crypto (crypto_name, url, category, description) VALUES (?, ?, ?, ?)',
+        [name, url, category,description]
+      )
+      return NextResponse.json({ message: 'crypto entity added successfully' }, { status: 201 })
     }
 
-    const [result]: any = await connection.execute(
-      'INSERT INTO supported_charities (entity, url, category, description) VALUES (?, ?, ?, ?)',
-      [entity, url, category, description]
-    );
-    return NextResponse.json(
-      { message: 'charity entity added successfully' },
-      { status: 201 }
-    );
-  }
-
-  if (category == 'crypto') {
-    const connection = await getSingleStoreConnection();
-    if (!connection) {
-      throw new Error('Failed to establish database connection');
-    }
-
-    const [result]: any = await connection.execute(
-      'INSERT INTO supported_crypto (entity, url, category, description) VALUES (?, ?, ?, ?)',
-      [entity, url, category, description]
-    );
-    return NextResponse.json(
-      { message: 'crypto entity added successfully' },
-      { status: 201 }
-    );
-  }
-
-  return NextResponse.json({ error: 'Invalid source' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid source' }, { status: 400 })
+    
 }
+
 
 export async function GET(request: NextRequest) {
   const connection = await getSingleStoreConnection();
