@@ -41,6 +41,20 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## YouTube demos
+
+### Round-Up for Impact demo
+
+Author: [**@akanksh5**](https://github.com/akanksh5)
+
+[![YouTube - Round-Up for Impact demo by @akanksh5](http://i.ytimg.com/vi/Ml74D3T1_nQ/hqdefault.jpg)](https://www.youtube.com/watch?v=Ml74D3T1_nQ)
+
+### DAIN integration demo
+
+Author: [**@KARTIK-PANDEY-KP**](https://github.com/KARTIK-PANDEY-KP)
+
+[![YouTube - DAIN integration demo by @KARTIK-PANDEY-KP](http://i.ytimg.com/vi/AuLn9vjqEqU/hqdefault.jpg)](https://www.youtube.com/watch?v=AuLn9vjqEqU)
+
 ## Screenshots
 
 ### Landing page
