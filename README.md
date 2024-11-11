@@ -93,4 +93,4 @@ Author: [**@KARTIK-PANDEY-KP**](https://github.com/KARTIK-PANDEY-KP)
 
 ---
 
-Developed with 💖 at [HackSC](https://www.hacksc.com/)
+Developed with 💖 at [HackSC 2024](https://www.hacksc.com/)
